@@ -3,10 +3,7 @@
   "configurations": {
     "blog-swa-blazor": {
       "appLocation": "Web",
-      "apiLocation": "Api",
       "outputLocation": "bin\\wwwroot",
-      "appBuildCommand": "dotnet publish -c Release -o bin",
-      "apiBuildCommand": "dotnet publish -c Release",
       "run": "dotnet watch run",
       "appDevserverUrl": "http://localhost:5175",
       "apiDevserverUrl": "http://localhost:7071"
