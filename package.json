@@ -1,12 +1,12 @@
 {
   "scripts": {
     "start": "concurrently \"npm run api\" \"npm run app\"",
-    
     "api": "cd Api && func start --csharp",
     "app": "swa start --data-api-location db"
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^1.1.1",
-    "concurrently": "^8.0.1"
+    "concurrently": "^8.0.1",
+    "dotenv": "^16.0.3"
   }
 }
