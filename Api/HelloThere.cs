@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
-namespace Company.Function
+namespace MyProject_Api
 {
     public class HelloThere
     {

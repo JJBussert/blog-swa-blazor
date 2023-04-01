@@ -2,7 +2,7 @@
   "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
   "configurations": {
     "blog-swa-blazor": {
-      "appLocation": "Web",
+      "appLocation": "App",
       "outputLocation": "bin\\wwwroot",
       "run": "dotnet watch run",
       "appDevserverUrl": "http://localhost:5175",

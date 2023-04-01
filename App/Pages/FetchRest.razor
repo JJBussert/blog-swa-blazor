@@ -1,0 +1,49 @@
+﻿@page "/fetchrest"
+@using Db;
+@inject HttpClient Http
+
+<PageTitle>Rest data-api example</PageTitle>
+
+<h1>Rest data-api</h1>
+
+<p>/data-api/RestMenu</p>
+
+@if (authors == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>AuthorId</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var author in authors)
+            {
+                <tr>
+                    <td>@author.AuthorId</td>
+                    <td>@author.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private static Author[]? authors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var temp = await Http.GetFromJsonAsync<RestMessage<Author[]>>("/data-api/rest/Author");
+
+        authors = temp.Value;
+    }
+
+    public class RestMessage<T> {
+        public T Value { get; set; }
+    }
+}

@@ -3,7 +3,7 @@
     "start": "concurrently \"npm run api\" \"npm run app\"",
     
     "api": "cd Api && func start --csharp",
-    "app": "swa start"
+    "app": "swa start --data-api-location db"
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^1.1.1",
