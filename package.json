@@ -4,13 +4,12 @@
     "api": "cd Api && func start --csharp",
     "app": "swa start --data-api-location db",
     "db-reset": "cd Db && dotnet ef database drop -f && dotnet ef database update",
-    "db-migrate": "cd Db && dotnet ef migrations add \"$(date +%s)\" && dotnet ef database update",
+    "db-migrate": "cd Db && dotnet ef migrations add \"$(date +%s)\"",
     "db-update": "cd Db && dotnet ef database update"
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^1.1.1",
     "azure-functions-core-tools": "^4.0.5095",
-    "concurrently": "^8.0.1",
-    "dotenv": "^16.0.3"
+    "concurrently": "^8.0.1"
   }
 }

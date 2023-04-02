@@ -7,9 +7,12 @@ namespace Db
         public DbSet<Author> Authors { get; set; }
         public DbSet<Book> Books { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     optionsBuilder.UseSqlServer("Server=tcp:e13-bdo-test-db.database.windows.net,1433;Initial Catalog=dev;Persist Security Info=False;User ID=bdoadmin;Password=P@ssword!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+        // }
+        public SimpleDbContext(DbContextOptions<SimpleDbContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=tcp:e13-bdo-test-db.database.windows.net,1433;Initial Catalog=dev;Persist Security Info=False;User ID=bdoadmin;Password=P@ssword!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
