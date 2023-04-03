@@ -4,7 +4,6 @@
     "blog-swa-blazor": {
       "appLocation": "App",
       "outputLocation": "bin\\wwwroot",
-      "run": "dotnet watch run",
       "appDevserverUrl": "http://localhost:5175",
       "apiDevserverUrl": "http://localhost:7071"
     }

@@ -23,10 +23,10 @@ namespace Db
 
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new System.Exception("Unable to find DB_CONNECTION_STRING in .env file.");
+                throw new Exception("Unable to find DB_CONNECTION_STRING in .env file.");
             }
 
-            DbContextOptionsBuilder<SimpleDbContext> optionsBuilder = new DbContextOptionsBuilder<SimpleDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<SimpleDbContext>();
             
             // Set CommandTimeout, e.g., 180 seconds (3 minutes)
             optionsBuilder.UseSqlServer(connectionString, options => options.CommandTimeout(180));

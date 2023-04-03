@@ -1,8 +1,11 @@
 {
   "scripts": {
-    "start": "concurrently \"npm run api\" \"npm run app\"",
-    "api": "cd Api && func start --csharp",
-    "app": "swa start --data-api-location db",
+    "start": "concurrently \"npm run start-api\" \"npm run start-app\" \"npm run start-swa\"",
+
+    "start-api": "cd Api && func start --csharp",
+    "start-app": "cd App && dotnet watch run",
+    "start-swa": "swa start --data-api-location db",
+
     "db-reset": "cd Db && dotnet ef database drop -f && dotnet ef database update",
     "db-migrate": "cd Db && dotnet ef migrations add \"$(date +%s)\"",
     "db-update": "cd Db && dotnet ef database update"
