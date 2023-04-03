@@ -1,0 +1,24 @@
+{
+    "auth": {
+        "identityProviders": {
+            "customOpenIdConnectProviders": {
+                "aadb2c": {
+                    "registration": {
+                        "clientIdSettingName": "f7ae7831-a3b8-4069-8f33-9dfab5b48002",
+                        "clientCredential": {
+                            "clientSecretSettingName": "B2C_CLIENT_SECRET"
+                        },
+                        "openIdConnectConfiguration": {
+                            "wellKnownOpenIdConfiguration": "https://jjblog.b2clogin.com/jjblog.onmicrosoft.com/B2C_1_SignIn/v2.0/.well-known/openid-configuration"
+                        }
+                    },
+                    "login": {
+                        "nameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+                        "scopes": [],
+                        "loginParameterNames": []
+                    }
+                }
+            }
+        }
+    }
+}
