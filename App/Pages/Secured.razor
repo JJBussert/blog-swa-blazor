@@ -1,0 +1,8 @@
+﻿@page "/secured"
+@using Microsoft.AspNetCore.Authorization
+@inject HttpClient Http
+@attribute [Authorize(Roles = "admin")]
+
+<h1>I Am Secured</h1>
+
+<h2>Only an admin user can get to this page</h2>
