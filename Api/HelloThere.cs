@@ -31,7 +31,7 @@ namespace Api
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            return new OkObjectResult("General Kenobi");
+            return new OkObjectResult("General Kenobi!!");
         }
     }
 }
