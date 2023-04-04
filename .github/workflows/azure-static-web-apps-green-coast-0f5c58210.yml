@@ -38,8 +38,8 @@ jobs:
         if: always()
         run: echo "url=$(echo "${{ steps.builddeploy.outputs.url }}" | sed 's/https:\/\///' | sed 's/\..*//')" >> $GITHUB_ENV
         id: set_output
-      - run: echo ${{ env.DB_CONNECTION_STRING }}
-      - run: echo ${{ env.url }}
+      - run: echo "${{ env.url }}"
+      - run: echo "${{ env.DB_CONNECTION_STRING }}"
       - uses: bluwy/substitute-string-action@v1
         id: sub
         with:
