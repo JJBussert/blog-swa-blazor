@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - run: echo "db_name=$(basename ${GITHUB_HEAD_REF})" >>$GITHUB_OUTPUT
+      - run: echo "db_name=${GITHUB_HEAD_REF}" >>$GITHUB_OUTPUT
       - run: echo "${{ env.db_name }}"
       - name: Extract branch name
         shell: bash
