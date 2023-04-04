@@ -42,6 +42,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
       - run: echo "${{ env.DB_CONNECTION_STRING }}"
       - name: Build Connection String
         run: echo "DB_CONNECTION_STRING=$(echo "${{ env.DB_CONNECTION_STRING }}" | sed 's/%%DB%%/${{ env.BRANCH_NAME }}/g')"  >> $GITHUB_ENV
