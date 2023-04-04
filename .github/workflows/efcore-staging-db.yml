@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  reset_db:
+  init_db:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-latest
     name: Reset Database Job
@@ -37,10 +37,13 @@ jobs:
         if: env.BRANCH_NAME != 'main' #safety check to not create a db for the main/prod branch
         run: npm run db-reset
       
-  close_pull_request_job:
+  drop_db:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
+    env:
+      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - uses: actions/checkout@v2
         with:
