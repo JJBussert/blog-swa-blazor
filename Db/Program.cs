@@ -21,7 +21,7 @@ string? connectionString = configuration["DB_CONNECTION_STRING"];
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new Exception("Unable to find DB_CONNECTION_STRING in .env file.");
+    throw new Exception("Unable to find DB_CONNECTION_STRING in .env file or EnvironmentVariables.");
 }
 
 var optionsBuilder = new DbContextOptionsBuilder<SimpleDbContext>();
