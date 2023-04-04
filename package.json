@@ -6,7 +6,7 @@
     "start-app": "cd App && dotnet watch run",
     "start-swa": "swa start --data-api-location db",
 
-    "db-reset": "cd Db && dotnet ef database drop -f && dotnet ef database update",
+    "db-reset": "cd Db && dotnet ef database drop -f && dotnet ef database update && dotnet run",
     "db-migrate": "cd Db && dotnet ef migrations add \"$(date +%s)\"",
     "db-update": "cd Db && dotnet ef database update"
   },
