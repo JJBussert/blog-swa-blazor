@@ -36,7 +36,7 @@ jobs:
           ###### End of Repository/Build Configurations ######
       - name: Set Output
         if: always()
-        run: echo "::set-output name=url::$(echo ${{ steps.builddeploy.outputs.url }} | sed 's/https:\/\///' | sed 's/\..*//')"
+        run: printf "::set-output name=url::%s" "$(echo "${{ steps.builddeploy.outputs.url }}" | sed 's/https:\/\///' | sed 's/\..*//')"
         id: set_output
       - name: Replace Subdomain in Connection String
         run: echo "DB_CONNECTION_STRING=$(echo ${{ env.DB_CONNECTION_STRING }} | sed 's/{{SUBDOMAIN_PLACEHOLDER}}/$({{ steps.set_output.outputs.url }})/g')"
