@@ -38,13 +38,18 @@ jobs:
       #  run: echo "SWA_UID=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}" | sed 's/https:\/\/\([^\.]*\)\..*/\1/')" >> $GITHUB_ENV
       #- run: echo "${{ env.SWA_UID }}"
       - run: echo "$(basename ${GITHUB_HEAD_REF})"
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
+        id: extract_branch
+      - run: echo "${{ env.extract_branch }}"
       - uses: bluwy/substitute-string-action@v1
         id: sub
         with:
           _input-text: '${{ env.DB_CONNECTION_STRING }}'
           _format-key: '%%key%%'
           DB: '$(basename ${GITHUB_HEAD_REF})'
-      - run: echo "${{ steps.sub.outputs.result }}" # Prints 'Hello GitHub!'
+      - run: echo "${{ steps.sub.outputs.result }}"
       - name: Replace Subdomain in Connection String
         run: echo "$(echo "${{ env.DB_CONNECTION_STRING }}" | sed 's/%%DB%%/$(basename ${GITHUB_HEAD_REF})/g')"
       - name: Run db-reset
