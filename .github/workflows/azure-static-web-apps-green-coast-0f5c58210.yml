@@ -22,6 +22,15 @@ jobs:
         with:
           submodules: true
       - run: echo "${{ env.BRANCH_NAME }}"
+      - uses: bluwy/substitute-string-action@v1
+        id: sub
+        with:
+          _input-text: '${{ env.DB_CONNECTION_STRING }}'
+          _format-key: '%%key%%'
+          DB: '${{ env.BRANCH_NAME }}'
+      - run: echo "${{ steps.sub.outputs.result }}"
+      - name: Replace Subdomain in Connection String
+        run: echo "$(echo "${{ env.DB_CONNECTION_STRING }}" | sed 's/%%DB%%/${{ env.BRANCH_NAME }}/g')"
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -39,16 +48,6 @@ jobs:
       #- name: Extract Subdomain
       #  run: echo "SWA_UID=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}" | sed 's/https:\/\/\([^\.]*\)\..*/\1/')" >> $GITHUB_ENV
       #- run: echo "${{ env.SWA_UID }}"
-      
-      - uses: bluwy/substitute-string-action@v1
-        id: sub
-        with:
-          _input-text: '${{ env.DB_CONNECTION_STRING }}'
-          _format-key: '%%key%%'
-          DB: '$(basename ${GITHUB_HEAD_REF})'
-      - run: echo "${{ steps.sub.outputs.result }}"
-      - name: Replace Subdomain in Connection String
-        run: echo "$(echo "${{ env.DB_CONNECTION_STRING }}" | sed 's/%%DB%%/$(basename ${GITHUB_HEAD_REF})/g')"
       - name: Run db-reset
         run: npm run db-reset
       
