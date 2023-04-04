@@ -46,6 +46,8 @@ jobs:
           dotnet-version: 7.0.202
       - name: Install dotnet-ef tool
         run: dotnet tool install --global dotnet-ef
+      - name: Set file permissions
+        run: chmod -R 777 ./Db
       - name: Run db-reset
         run: npm run db-reset
       
