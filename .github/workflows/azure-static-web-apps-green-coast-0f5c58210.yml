@@ -35,7 +35,7 @@ jobs:
 
   staging_db:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Staging Database Job
     env:
       DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
       BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
