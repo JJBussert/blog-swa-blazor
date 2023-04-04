@@ -39,7 +39,7 @@ jobs:
         run: echo "::set-output name=url::$(echo ${{ steps.builddeploy.outputs.url }} | sed 's/https:\/\///' | sed 's/\..*//')"
         id: set_output
       - name: Replace Subdomain in Connection String
-        run: echo "DB_CONNECTION_STRING=${{ env.DB_CONNECTION_STRING/{{SUBDOMAIN_PLACEHOLDER}}/$({{ steps.set_output.outputs.url }})/ }}"
+        run: echo "DB_CONNECTION_STRING=$(echo ${{ env.DB_CONNECTION_STRING }} | sed 's/{{SUBDOMAIN_PLACEHOLDER}}/$({{ steps.set_output.outputs.url }})/g')"
       - name: Run db-reset
         run: npm run db-reset
         
