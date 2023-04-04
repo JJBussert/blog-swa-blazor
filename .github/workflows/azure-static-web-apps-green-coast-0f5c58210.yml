@@ -34,23 +34,16 @@ jobs:
           data_api_location: "Db" # Folder holding the staticwebapps.database.config.json file
           output_location: "wwwroot" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
-      - run: echo "${{ steps.builddeploy.outputs.static_web_app_url }}"
       - name: Extract Subdomain
-        run: echo "ExtractedUID=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}" | sed 's/https:\/\/\([^\.]*\)\..*/\1/')" >> $GITHUB_ENV
-      - run: echo "${{ env.ExtractedUID }}"
-      - name: Set Output
-        if: always()
-        run: echo "url=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}" | sed 's/https:\/\///' | sed 's/\..*//')" >> $GITHUB_ENV
-        id: set_output
-      - run: echo "${{ env.url }}"
-      - run: echo "${{ env.DB_CONNECTION_STRING }}"
+        run: echo "SWA_UID=$(echo "${{ steps.builddeploy.outputs.static_web_app_url }}" | sed 's/https:\/\/\([^\.]*\)\..*/\1/')" >> $GITHUB_ENV
+      - run: echo "${{ env.SWA_UID }}"
       - uses: bluwy/substitute-string-action@v1
         id: sub
         with:
           _input-text: '${{ env.DB_CONNECTION_STRING }}'
           _format-key: '%%key%%'
           DB: '${{ env.url }}'
-      - run: echo ${{ steps.sub.outputs.result }} # Prints 'Hello GitHub!'
+      - run: echo "${{ steps.sub.outputs.result }}" # Prints 'Hello GitHub!'
       - name: Replace Subdomain in Connection String
         run: echo "DB_CONNECTION_STRING=$(echo ${{ env.DB_CONNECTION_STRING }} | sed 's/%%DB%%/$({{ steps.set_output.outputs.url }})/g')"
       - name: Run db-reset
