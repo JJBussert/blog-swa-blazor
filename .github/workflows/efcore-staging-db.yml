@@ -11,7 +11,7 @@ on:
 
 jobs:
   reset_db:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-latest
     name: Reset Database Job
     env:
