@@ -1,0 +1,59 @@
+name: Staging Database
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+jobs:
+  reset_db:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Reset Database Job
+    env:
+      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: echo "${{ env.DB_CONNECTION_STRING }}"
+      - name: Build Connection String
+        run: echo "DB_CONNECTION_STRING=$(echo "${{ env.DB_CONNECTION_STRING }}" | sed 's/%%DB%%/${{ env.BRANCH_NAME }}/g')"  >> $GITHUB_ENV
+      - run: echo "${{ env.DB_CONNECTION_STRING }}"
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.202
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+      - name: Set file permissions
+        run: chmod -R 777 ./Db
+      - name: Run db-reset
+        if: env.BRANCH_NAME != 'main' #safety check to not create a db for the main/prod branch
+        run: npm run db-reset
+      
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - run: echo "${{ env.DB_CONNECTION_STRING }}"
+      - name: Build Connection String
+        run: echo "DB_CONNECTION_STRING=$(echo "${{ env.DB_CONNECTION_STRING }}" | sed 's/%%DB%%/${{ env.BRANCH_NAME }}/g')"  >> $GITHUB_ENV
+      - run: echo "${{ env.DB_CONNECTION_STRING }}"
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.202
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+      - name: Set file permissions
+        run: chmod -R 777 ./Db
+      - name: Run db-drop
+        if: env.BRANCH_NAME != 'main' #safety check to not create a db for the main/prod branch
+        run: npm run db-drop
