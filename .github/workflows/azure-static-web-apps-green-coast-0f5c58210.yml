@@ -14,6 +14,8 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    env:
+      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -32,7 +34,15 @@ jobs:
           data_api_location: "Db" # Folder holding the staticwebapps.database.config.json file
           output_location: "wwwroot" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
-
+      - name: Set Output
+        if: always()
+        run: echo "::set-output name=url::$(echo ${{ steps.builddeploy.outputs.url }} | sed 's/https:\/\///' | sed 's/\..*//')"
+        id: set_output
+      - name: Replace Subdomain in Connection String
+        run: echo "DB_CONNECTION_STRING=${{ env.DB_CONNECTION_STRING/{{SUBDOMAIN_PLACEHOLDER}}/$({{ steps.set_output.outputs.url }})/ }}"
+      - name: Run db-reset
+        run: npm run db-reset
+        
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
