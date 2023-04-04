@@ -15,7 +15,8 @@ namespace Db
 
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvFile(envFilePath);
+                .AddEnvFile(envFilePath)
+                .AddEnvironmentVariables();
 
             IConfiguration configuration = configurationBuilder.Build();
 
