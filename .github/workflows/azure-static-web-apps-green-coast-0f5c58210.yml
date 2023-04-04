@@ -45,7 +45,7 @@ jobs:
           DB: '${{ env.url }}'
       - run: echo "${{ steps.sub.outputs.result }}" # Prints 'Hello GitHub!'
       - name: Replace Subdomain in Connection String
-        run: echo "DB_CONNECTION_STRING=$(echo ${{ env.DB_CONNECTION_STRING }} | sed 's/%%DB%%/$({{ steps.set_output.outputs.url }})/g')"
+        run: echo "$(echo ${{ env.DB_CONNECTION_STRING }} | sed 's/%%DB%%/$({{ steps.set_output.outputs.url }})/g')"
       - name: Run db-reset
         run: npm run db-reset
       
