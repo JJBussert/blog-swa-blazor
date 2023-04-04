@@ -34,7 +34,6 @@ jobs:
           ###### End of Repository/Build Configurations ######
 
   staging_db:
-    if: env.BRANCH_NAME != 'main' # this is for building out dev databases for staging environments, not for migrating prod
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
@@ -57,10 +56,10 @@ jobs:
       - name: Set file permissions
         run: chmod -R 777 ./Db
       - name: Run db-reset
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+        if: env.BRANCH_NAME != 'main' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed'))
         run: npm run db-reset
       - name: Run db-drop
-        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        if: env.BRANCH_NAME != 'main' && github.event_name == 'pull_request' && github.event.action == 'closed'
         run: npm run db-drop
       
   close_pull_request_job:
