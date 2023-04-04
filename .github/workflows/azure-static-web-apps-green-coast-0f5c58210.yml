@@ -34,6 +34,10 @@ jobs:
           data_api_location: "Db" # Folder holding the staticwebapps.database.config.json file
           output_location: "wwwroot" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+      - run: echo "${{ steps.builddeploy.outputs.url }}"
+      - name: Extract Subdomain
+        run: echo "ExtractedUID=$(echo "${{ steps.builddeploy.outputs.url }}" | sed 's/https:\/\/\([^\.]*\)\..*/\1/')" >> $GITHUB_ENV
+      - run: echo "${{ env.ExtractedUID }}"
       - name: Set Output
         if: always()
         run: echo "url=$(echo "${{ steps.builddeploy.outputs.url }}" | sed 's/https:\/\///' | sed 's/\..*//')" >> $GITHUB_ENV
