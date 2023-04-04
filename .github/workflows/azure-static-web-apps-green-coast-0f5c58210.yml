@@ -43,7 +43,7 @@ jobs:
         with:
           _input-text: '${{ env.DB_CONNECTION_STRING }}'
           _format-key: '%%key%%'
-          DB: '{{ steps.set_output.outputs.url }}'
+          DB: '${{ steps.set_output.outputs.url }}'
       - run: echo ${{ steps.sub.outputs.result }} # Prints 'Hello GitHub!'
       - name: Replace Subdomain in Connection String
         run: echo "DB_CONNECTION_STRING=$(echo ${{ env.DB_CONNECTION_STRING }} | sed 's/{{SUBDOMAIN_PLACEHOLDER}}/$({{ steps.set_output.outputs.url }})/g')"
