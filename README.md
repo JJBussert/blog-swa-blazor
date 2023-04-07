@@ -29,6 +29,5 @@ https://learn.microsoft.com/en-us/azure/active-directory-b2c/configure-authentic
 https://learn.microsoft.com/en-us/azure/active-directory-b2c/enable-authentication-azure-static-app-options
 
 pulumi new azure-csharp --dir Infra
-pulumi token pul-b082c6892bba36a85a057616efc1c91a85070f25
 pulumi login file://
 $PULUMI_CONFIG_PASSPHRASE = "P@ssword!"
