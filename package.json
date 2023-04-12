@@ -11,15 +11,20 @@
     "db-update": "cd Db && dotnet ef database update",
     "db-drop": "cd Db && dotnet ef database drop -f",
 
-    "infra-init": "cd Infra && pulumi login file:// && dotenv -e ../.env az login --subscription $AZURE_SUBSCRIPTION_ID && dotenv -e ../.env pulumi stack init dev",
-    "infra-up": "cd Infra && dotenv -e ../.env pulumi up",
-    "infra-down": "cd Infra && dotenv -e ../.env pulumi destroy"
+    "infra-main-login": " az login --output none && dotenv -e .env -- cross-var az account set --subscription $AZURE_SUBSCRIPTION_ID && az account show && pulumi login file:// ",
+    "infra-main-up": "cd Infra && dotenv -e ../.env -- pulumi up",
+    "infra-main-destroy": "cd Infra && dotenv -e ../.env -- pulumi destroy",
+
+    "infra-b2c-login": "dotenv -e .env -- cross-var az login --tenant $B2CNAME --allow-no-subscriptions && pulumi login file:// ",
+    "infra-b2c-up": "cd Infra.B2C && dotenv -e ../.env -- pulumi up",
+    "infra-b2c-destroy": "cd Infra.B2C && dotenv -e ../.env -- pulumi destroy"
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^1.1.1",
     "@pulumi/pulumi": "^3.61.1",
     "azure-functions-core-tools": "^4.0.5095",
     "concurrently": "^8.0.1",
+    "cross-var": "^1.1.0",
     "dotenv-cli": "^7.2.1"
   }
 }

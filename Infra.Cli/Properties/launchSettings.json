@@ -1,0 +1,24 @@
+{
+  "profiles": {
+    "Infra.Cli-main-up": {
+      "commandName": "Project",
+      "commandLineArgs": "main-up",
+      "workingDirectory": "$(SolutionDir)"
+    },
+    "Infra.Cli-main-destroy": {
+      "commandName": "Project",
+      "commandLineArgs": "main-destroy",
+      "workingDirectory": "$(SolutionDir)"
+    },
+    "Infra.Cli-b2c-up": {
+      "commandName": "Project",
+      "commandLineArgs": "b2c-up",
+      "workingDirectory": "$(SolutionDir)"
+    },
+    "Infra.Cli-b2c-destroy": {
+      "commandName": "Project",
+      "commandLineArgs": "b2c-destroy",
+      "workingDirectory": "$(SolutionDir)"
+    }
+  }
+}
