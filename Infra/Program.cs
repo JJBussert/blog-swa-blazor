@@ -1,36 +1,42 @@
-﻿using Microsoft.Extensions.Configuration;
-using Pulumi;
-using Pulumi.AzureNative.Resources;
-using Pulumi.AzureNative.Resources.Inputs;
-using Pulumi.AzureNative.Sql;
-using Pulumi.AzureNative.Sql.Inputs;
-using Pulumi.AzureNative.Web;
-using Pulumi.AzureNative.Web.Inputs;
-using Pulumi.AzureNative.Aad;
-using Pulumi.AzureNative.Aad.Inputs;
+﻿using Pulumi;
 using Pulumi.AzureNative.AzureActiveDirectory;
-using Pulumi.AzureNative.AzureActiveDirectory.Inputs;
-using System.Collections.Generic;
-using System.IO;
-using System;
-using Pulumi.AzureAD;
-using Pulumi.AzureAD.Inputs;
+using System.Threading.Tasks;
 
-return await Pulumi.Deployment.RunAsync(() =>
+class Program
 {
 
-    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
-        .SetBasePath(Directory.GetCurrentDirectory())
-        .AddEnvFile("../.env")
-        .AddEnvironmentVariables();
+    static Task<int> Main()
+    {
+        return Deployment.RunAsync<MainStack>();
+    }
 
-    IConfiguration configuration = configurationBuilder.Build();
+    //static Task<int> Main()
+    //{
+    //    // Define the stack transformation
+    //    var stackTransformation = new ResourceTransformation((args) =>
+    //    {
+    //        // Get the resources in the stack
+    //        //var resources = Deployment.Instance.;
 
-    string? swaAccessToken = configuration["SWA_ACCESS_TOKEN"];
-    string? subscriptionId = configuration["AZURE_SUBSCRIPTION"];
-    string? devIps = configuration["DEV_IPS"];
-    // Create an Azure Resource Group
-    var rg = new ResourceGroup("jj-swa-rg");
+    //        // If the resource is a B2CTenant and it is being destroyed, perform the custom activity
+    //        if (args is B2CTenantArgs b2cTenantArgs && resources.TryGetResource(args.Name, out var resource) && resource.Delete)
+    //        {
+    //            // Perform the custom activity here
+    //            // ...
+    //        }
+
+    //        // Return the original arguments without modifying them
+    //        return Task.FromResult(args);
+    //    });
+
+    //    // Register the stack transformation with the deployment
+    //    var deployment = new Deployment();deployment.
+    //    deployment.RegisterResourceTransformation(stackTransformation);
+
+    //    // Run the Pulumi stack
+    //    return deployment.RunAsync<MainStack>();
+    //}
+}
 
     //var swa = new StaticSite("jj-swa", new StaticSiteArgs {
     //    Branch="main",
@@ -49,71 +55,6 @@ return await Pulumi.Deployment.RunAsync(() =>
     //        Tier = "Standard"
     //    },
     //});
-
-    var server = new Server("jj-swa-db", new ServerArgs
-    {
-        ResourceGroupName = rg.Name,
-        Location = rg.Location,
-        AdministratorLogin = "myadmin",
-        AdministratorLoginPassword = "P@ssword!",
-        Version = "12.0"
-    });
-
-    var firewallRules = new List<FirewallRule>();
-    if(!string.IsNullOrWhiteSpace(devIps))
-    {
-        var ipAddresses = devIps.Split(',');
-
-        foreach (var ipAddress in ipAddresses)
-        {
-            firewallRules.Add(new FirewallRule($"dev-access-{ipAddress}", new FirewallRuleArgs
-            {
-                ResourceGroupName = rg.Name,
-                ServerName = server.Name,
-                StartIpAddress = ipAddress,
-                EndIpAddress = ipAddress
-            }));
-        }
-    }
-
-    // this checks the "Allow Azure services and resources to access the server" Exception under Networking
-    firewallRules.Add(new FirewallRule("allow-azure-services", new FirewallRuleArgs
-    {
-        ResourceGroupName = rg.Name,
-        ServerName = server.Name,
-        StartIpAddress = "0.0.0.0",
-        EndIpAddress = "0.0.0.0"
-    }));
-
-    var b2cTenant = new B2CTenant("jjtestb2c", new B2CTenantArgs
-    {
-        Location = "United States",
-        Properties = new CreateTenantRequestBodyPropertiesArgs
-        {
-            CountryCode = "US",
-            DisplayName = "Contoso",
-        },
-        ResourceGroupName = rg.Name,
-        ResourceName = rg.Name.Apply(rgName =>
-            {
-                var suffix = rgName.Substring("jj-swa-rg".Length);
-                return $"jjtestb2c{suffix}.onmicrosoft.com";
-            }),
-        Sku = new B2CResourceSKUArgs
-        {
-            Name = B2CResourceSKUName.PremiumP1,
-            Tier = B2CResourceSKUTier.A0,
-        },
-    }, new CustomResourceOptions
-    {
-        CustomTimeouts = new CustomTimeouts
-        {
-            Create = TimeSpan.FromMinutes(10), // 10-minute create timeout
-            Update = TimeSpan.FromMinutes(5),  // 5-minute update timeout
-            Delete = TimeSpan.FromMinutes(5),  // 5-minute delete timeout
-        }
-    });
-
     // var example = new Application("example", new()
     // {
     //     DisplayName = "example",
@@ -276,33 +217,3 @@ return await Pulumi.Deployment.RunAsync(() =>
     //         },
     //     },
     // });
-
-
-    var database = new Database("dev", new DatabaseArgs
-    {
-        ResourceGroupName = rg.Name,
-        ServerName = server.Name,
-        Location = rg.Location,
-        Collation = "SQL_Latin1_General_CP1_CI_AS",
-        CreateMode = CreateMode.Default
-    });
-
-    var connectionString = Output.Tuple(server.Name, database.Name, server.AdministratorLogin).Apply(t =>
-    {
-        var (serverName, databaseName, login) = t;
-        return $"Server=tcp:{serverName}.database.windows.net,1433;Initial Catalog={databaseName};Persist Security Info=False;User ID={login};Password=P@ssword!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-    });
-    var resourceGroupLink = rg.Name.Apply(rg =>
-        Output.Format($"https://portal.azure.com/#resource/subscriptions/{subscriptionId}/resourceGroups/{rg}")
-    );
-    var b2cLink = b2cTenant.Id.Apply(id =>
-        Output.Format($"https://portal.azure.com/{id}#blade/Microsoft_AAD_B2CAdmin/TenantManagementMenuBlade/overview")
-    );
-
-    return new Dictionary<string, object?>
-    {
-        { "connectionString", connectionString },
-        { "resourceGroupLink", resourceGroupLink },
-        { "b2cLink", b2cLink }
-    };
-});
