@@ -15,6 +15,8 @@ using System.IO;
 using System;
 using Pulumi.AzureAD;
 using Pulumi.AzureAD.Inputs;
+using Pulumi.AzureNative.CustomProviders;
+
 public class MainStack : Stack
 {
 
@@ -70,16 +72,17 @@ public class MainStack : Stack
         }));
 
         var AutoUserPasswords = Output.Create("P@ssword!");
-        var AutoEnabledUser = Output.Create(rg.Name.Apply(rgName =>
+        var aadDomains = GetDomains.Invoke();
+        //var AutoEnabledUser = Output.Create(rg.Name.Apply(rgName =>
+        //{
+        //    var suffix = rgName["jj-swa-rg".Length..];
+        //    return $"auto.enabled@jjtestb2c{suffix}.onmicrosoft.com";
+        //}));
+        var autoEnabled = new User("demo.enabled", new UserArgs
         {
-            var suffix = rgName["jj-swa-rg".Length..];
-            return $"auto.enabled@jjtestb2c{suffix}.onmicrosoft.com";
-        }));
-        var autoEnabled = new User("auto.enabled", new UserArgs
-        {
-            DisplayName = "auto.enabled",
+            DisplayName = "demo.enabled",
             Password = AutoUserPasswords.Apply(p => p),
-            UserPrincipalName = AutoEnabledUser.Apply(p => p),
+            UserPrincipalName = aadDomains.Apply(domains => $"demo.enabled@{domains.Domains.First().DomainName}"),
             AccountEnabled = true
         });
 

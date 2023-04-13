@@ -1,13 +1,16 @@
 {
   "scripts": {
     "start": "concurrently \"npm run swa-api\" \"npm run swa-web\" \"npm run swa-db\"",
+
     "swa-api": "cd Api && func start --csharp",
     "swa-web": "cd Web && dotnet watch run",
     "swa-db": "swa start --data-api-location db",
+
     "db-reset": "cd Db && dotnet ef database drop -f && dotnet ef database update && dotnet run",
     "db-migrate": "cd Db && dotnet ef migrations add \"$(date +%s)\"",
     "db-update": "cd Db && dotnet ef database update",
     "db-drop": "cd Db && dotnet ef database drop -f",
+
     "infra-login": "dotenv -e .env -- cross-var az login --tenant $AZURE_TENANT_ID --output none && dotenv -e .env -- cross-var az account set --subscription $AZURE_SUBSCRIPTION_ID && az account show && pulumi login file:// ",
     "infra-up": "cd Infra && dotenv -e ../.env -- pulumi up",
     "infra-destroy": "cd Infra && dotenv -e ../.env -- pulumi destroy"
