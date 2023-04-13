@@ -17,9 +17,15 @@ swa cli cannot handle dotnet watch when using /data-api/* calls
   winget install -e --id Microsoft.WindowsTerminal
   winget install -e --id Pulumi.Pulumi
   dotnet tool install --global dotnet-ef
+  dotnet tool install --global Microsoft.DataApiBuilder
+  dotnet tool install --global StrawberryShake.Tools
   nvm install 16
   nvm use 16
 ```
+
+## References
+
+- https://www.youtube.com/watch?v=7W6h4PuQom8&t=2574s
 
 ## Environment Variables
 
