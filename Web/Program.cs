@@ -12,6 +12,6 @@ builder.Services.AddStaticWebAppsAuthentication();
 
 builder.Services
     .AddDemoClient()
-    .ConfigureHttpClient(client => client.BaseAddress = new Uri("http://localhost:4280/data-api/graphql"));
+    .ConfigureHttpClient(client => client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}data-api/graphql"));
 
 await builder.Build().RunAsync();
