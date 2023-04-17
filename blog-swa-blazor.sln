@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.env = .env
 		package.json = package.json
 		README.md = README.md
+		swa-db-connections\staticwebapp.database.config.json = swa-db-connections\staticwebapp.database.config.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{940BC9C8-8D12-4990-9F31-E11113F94CDB}"
