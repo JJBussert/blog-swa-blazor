@@ -32,7 +32,10 @@ public class MainStack : Stack
         //string? swaAccessToken = c.RequireSecret("SWA_ACCESS_TOKEN");
         
         // Create an Azure Resource Group
-        var rg = new ResourceGroup("jj-swa-rg");
+        var rg = new ResourceGroup("jj-swa-rg", new ResourceGroupArgs
+        {
+            Location = "EastUS2"
+        });
 
 
         var server = new Server("jj-swa-db", new ServerArgs
@@ -71,18 +74,22 @@ public class MainStack : Stack
             EndIpAddress = "0.0.0.0"
         }));
 
-        var AutoUserPasswords = Output.Create("P@ssword!");
+        var RgSuffix = rg.Name.Apply(rgName =>
+                {
+                    return rgName["jj-swa-rg".Length..];
+                });
+
+        var HighlySecurePassword = Output.Create("P@ssword!");
         var aadDomains = GetDomains.Invoke();
-        //var AutoEnabledUser = Output.Create(rg.Name.Apply(rgName =>
-        //{
-        //    var suffix = rgName["jj-swa-rg".Length..];
-        //    return $"auto.enabled@jjtestb2c{suffix}.onmicrosoft.com";
-        //}));
         var autoEnabled = new User("demo.enabled", new UserArgs
         {
-            DisplayName = "demo.enabled",
-            Password = AutoUserPasswords.Apply(p => p),
-            UserPrincipalName = aadDomains.Apply(domains => $"demo.enabled@{domains.Domains.First().DomainName}"),
+            DisplayName = RgSuffix.Apply(s => $"demo.enabled.{s}"),
+            Password = HighlySecurePassword.Apply(p => p),
+            UserPrincipalName = Output.Tuple(aadDomains, RgSuffix).Apply(t => 
+            {
+                var (domains, suffix) = t;
+                return $"demo.enabled.{suffix}@{domains.Domains.First().DomainName}";
+            }),
             AccountEnabled = true
         });
 
