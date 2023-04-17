@@ -40,7 +40,7 @@ else
     {
         var temp = await Http.GetFromJsonAsync<RestMessage<Author[]>>("/data-api/rest/Author");
 
-        authors = temp.Value;
+        authors = temp!.Value;
     }
 
     public class RestMessage<T> {

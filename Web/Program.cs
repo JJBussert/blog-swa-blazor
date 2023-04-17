@@ -11,7 +11,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddStaticWebAppsAuthentication();
 
 builder.Services
-    .AddJJClient()
+    .AddDemoClient()
     .ConfigureHttpClient(client => client.BaseAddress = new Uri("http://localhost:4280/data-api/graphql"));
 
 await builder.Build().RunAsync();
