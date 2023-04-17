@@ -1,0 +1,8 @@
+query GetAuthors{
+    authors {
+      items {
+        Name,
+        AuthorId
+      }
+    }
+}

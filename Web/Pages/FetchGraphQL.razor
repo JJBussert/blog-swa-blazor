@@ -1,0 +1,45 @@
+﻿@page "/fetchgraphql"
+@inject JJClient Client
+
+<PageTitle>GraphQL data-api example</PageTitle>
+
+<h1>GraphQL data-api</h1>
+
+<p>/data-api/graphql</p>
+
+@if (authors == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>AuthorId</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var author in authors)
+            {
+                <tr>
+                    <td>@author.AuthorId</td>
+                    <td>@author.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private static IGetAuthors_Authors_Items[]? authors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        var temp = await Client.GetAuthors.ExecuteAsync();
+
+        authors = temp.Data!.Authors.Items.ToList().ToArray();
+    }
+}
