@@ -26,9 +26,13 @@ public class MainStack : Stack
     [Output]
     public Output<string> ResourceGroupLink { get; set; }
 
+    [Output]
+    public Output<string> DemoUser { get; set; }
+
     public MainStack()
     {
         var c = new Pulumi.Config();
+        var subscriptionId = c.Require("AZURE_SUBSCRIPTION_ID");
         //string? swaAccessToken = c.RequireSecret("SWA_ACCESS_TOKEN");
         
         // Create an Azure Resource Group
@@ -81,14 +85,14 @@ public class MainStack : Stack
 
         var HighlySecurePassword = Output.Create("P@ssword!");
         var aadDomains = GetDomains.Invoke();
-        var autoEnabled = new User("demo.enabled", new UserArgs
+        var demoUser = new User("demo.user", new UserArgs
         {
-            DisplayName = RgSuffix.Apply(s => $"demo.enabled.{s}"),
+            DisplayName = RgSuffix.Apply(s => $"demo.user.{s}"),
             Password = HighlySecurePassword.Apply(p => p),
             UserPrincipalName = Output.Tuple(aadDomains, RgSuffix).Apply(t => 
             {
                 var (domains, suffix) = t;
-                return $"demo.enabled.{suffix}@{domains.Domains.First().DomainName}";
+                return $"demo.user.{suffix}@{domains.Domains.First().DomainName}";
             }),
             AccountEnabled = true
         });
@@ -108,11 +112,11 @@ public class MainStack : Stack
             return $"Server=tcp:{serverName}.database.windows.net,1433;Initial Catalog={databaseName};Persist Security Info=False;User ID={login};Password=P@ssword!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         });
 
-        ResourceGroupLink = Output.Tuple(rg.Name, c.RequireSecret("AZURE_SUBSCRIPTION_ID")).Apply(t =>
+        ResourceGroupLink = rg.Name.Apply(rgName =>
         {
-            var (rgName, subscriptionId) = t;
             return $"https://portal.azure.com/#resource/subscriptions/{subscriptionId}/resourceGroups/{rgName}";
         });
 
+        DemoUser = demoUser.UserPrincipalName;
     }
 }

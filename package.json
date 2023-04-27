@@ -3,16 +3,16 @@
     "start": "concurrently \"npm run swa-api\" \"npm run swa-web\" \"npm run swa-db\"",
     "swa-api": "cd Api && func start --csharp",
     "swa-web": "cd Web && dotnet watch run",
-    "swa-db": "swa start --data-api-location swa-db-connections",
-    "swa-dab": "cd Db && dotenv -e ../.env -- dab start --config staticwebapp.database.config.json",
+    "swa-db": "swa start --data-api-location swa-db-connections --open",
+    "swa-dab": "cd swa-db-connections && dotenv -e ../.env -- dab start --config staticwebapp.database.config.json",
     "db-reset": "cd Db && dotnet ef database drop -f && dotnet ef database update && dotnet run",
     "db-migrate": "cd Db && dotnet ef migrations add \"$(date +%s)\"",
     "db-update": "cd Db && dotnet ef database update",
     "db-drop": "cd Db && dotnet ef database drop -f",
+    "init-local-env": "jj-envset PULUMI_CONFIG_PASSPHRASE \"P@ssword!\" && jj-envprompt AZURE_TENANT_ID && jj-envprompt AZURE_SUBSCRIPTION_ID",
     "infra-login": "dotenv -e .env -- cross-var az login --tenant $AZURE_TENANT_ID --output none && dotenv -e .env -- cross-var az account set --subscription $AZURE_SUBSCRIPTION_ID && az account show && pulumi login file:// && cd Infra && dotenv -e ../.env -- cross-var pulumi stack init local && dotenv -e ../.env -- cross-var pulumi config set AZURE_SUBSCRIPTION_ID $AZURE_SUBSCRIPTION_ID",
-    "infra-up": "cd Infra && dotenv -e ../.env -- pulumi up",
-    "infra-destroy": "cd Infra && dotenv -e ../.env -- pulumi destroy",
-    "init-env": "setenv PULUMI_CONFIG_PASSPHRASE \"echo P@ssword!\""
+    "infra-up": "cd Infra && dotenv -e ../.env -- pulumi up && dotenv -e ../.env -- jj-envrun DB_CONNECTION_STRING \"pulumi stack output ConnectionString\" -e ../.env && npm run db-reset",
+    "infra-destroy": "cd Infra && dotenv -e ../.env -- pulumi destroy"
   },
   "devDependencies": {
     "@azure/static-web-apps-cli": "^1.1.1",
@@ -20,6 +20,8 @@
     "concurrently": "^8.0.1",
     "cross-var": "^1.1.0",
     "dotenv-cli": "^7.2.1",
-    "jj-setenv": "^1.0.8"
+    "jj-envprompt": "^1.0.1",
+    "jj-envrun": "^1.0.2",
+    "jj-envset": "^1.0.6"
   }
 }
